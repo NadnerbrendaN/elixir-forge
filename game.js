@@ -97,6 +97,16 @@ class order {
 	}
 }
 
+class item {
+	constructor(x,y, name, picture, display) {
+		this.x = x;
+		this.y = y;
+		this.name = name;
+		this.pic = picture;
+		this.disp = display;
+	}
+}
+
 function click(event) {
 	let x = event.clientX - 8;
 	let y = event.clientY - 8;
@@ -186,7 +196,7 @@ function tick() {
 			ctx.drawImage(R1, 0,0);
 			break;
 	}
-	if (map != 0){
+	if (map == 1 || map == 2 || map == 3){
 		ctx.fillStyle = "#000000";
 		ctx.fillRect(player.x,player.y, 64,64);
 	
