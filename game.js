@@ -22,24 +22,24 @@ window.onkeydown = function(e) { pressedKeys[e.key] = true; }
 function start() {
 	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(0,0, 512,512);
-	sBut.onload = function(){ctx.drawImage(sBut, 120,152, 256,128)}
-	for (i=0;i<10;i++) {
+	sBut.onload = function(){ctx.drawImage(sBut, 128,144, 256,128)}
+	for (i=0;i<8;i++) {
 		if  (i == lev){
 			ctx.fillStyle = "#50ABE6";
 		} else {
 			ctx.fillStyle = "#106B86";
 		}
-		if (i<5){
-			ctx.fillRect(56+i*(64+16),320, 64,64);
+		if (i<4){
+			ctx.fillRect(104+i*(64+16),320, 64,64);
 		} else {
-			ctx.fillRect(56+i*(64+16)-400,400, 64,64);
+			ctx.fillRect(104+i*(64+16)-320,400, 64,64);
 		}
 		ctx.fillStyle = "#000000";
 		ctx.font = "64px sans";
-		if (i<5){
-			ctx.fillText(i, 56+i*(64+16)+12, 376);
+		if (i<4){
+			ctx.fillText(i, 104+i*(64+16)+12, 376);
 		} else {
-			ctx.fillText(i, 56+i*(64+16)+12-400, 456);
+			ctx.fillText(i, 104+i*(64+16)+12-320, 456);
 		}
 	}
 }
@@ -57,27 +57,59 @@ class being {
 
 var player = new being(224,384);
 
+function getLines(ctx, text, maxWidth) {
+    var words = text.split(" ");
+    var lines = [];
+    var currentLine = words[0];
+
+    for (var i = 1; i < words.length; i++) {
+        var word = words[i];
+        var width = ctx.measureText(currentLine + " " + word).width;
+        if (width < maxWidth) {
+            currentLine += " " + word;
+        } else {
+            lines.push(currentLine);
+            currentLine = word;
+        }
+    }
+    lines.push(currentLine);
+    return lines;
+}
+
 class order {
-	constructor(message) {
+	constructor(message, size) {
 		this.mess = message;
+		this.size = size;
 	}
 	
 	display() {
 		ctx.drawImage(tim, 0,0);
 		ctx.fillStyle = "#000000";
-		ctx.font = "20px sans serif";
-		ctx.fillText(mess, 64,148, 256);
+		ctx.font = `${this.size}px sans serif`;
+		let lines = getLines(ctx, this.mess, 216);
+		for (i=0;i<lines.length;i++){
+			ctx.fillText(lines[i], 40,112+(this.size*(i+1)));
+		}
+		ctx.fillStyle = "FF0000";
+		ctx.font = "32px sans serif";
+		ctx.fillText("x", 480,64);
+		ctx.strokeRect(478,45, 20,20);
 	}
 }
 
 function click(event) {
-	let x = event.clientX;
-	let y = event.clientY;
+	let x = event.clientX - 8;
+	let y = event.clientY - 8;
+	console.log(x+", "+y)
 	if (!started){
-		if (x >= 128 && x <= 384 && y >= 160 && y <= 288){
+		if (x >= 128 && x <= 384 && y >= 144 && y <= 272){
 			started = true;
 			map = 0;
 			inter = setInterval(tick, 16);
+		}
+	} else if (map == 0){
+		if (x >= 478 && x <= 498 && y >= 45 && y <= 65){
+			map = 1;
 		}
 	}
 }
@@ -134,14 +166,19 @@ function collide(){
 	}
 }
 
-tutorial = new order("Testing tutorial message");
+tutorial = new order("Hello! Welcome to the lab! To get you acquainted with the new working environment, I have a simple task for you: brew a potion that makes the person who drinks it jump higher. To interact with things, press E near them.", 22);
+var tutDone = false;
 
 function tick() {
 	switch (map){
 		case 0:
 			switch (lev){
 				case 0:
-					tutorial.display();
+					if (!tutDone){
+						tutorial.display();
+					} else {
+						alert("Tutorial closing message or something");
+					}
 					break;
 			}
 			break;
@@ -164,6 +201,14 @@ function tick() {
 		}
 		if (pressedKeys['s'] || pressedKeys['ArrowDown']){
 			player.ys += acc;
+		}
+		if (pressedKeys['e']){
+			if (player.x + 32 >= 192 && player.x + 32 <= 320 && player.y + 32 >= 400){
+				map = 0;
+			}
+			if (player.x + 32 >= 400 && player.y + 32 <= 128){
+				map = -1;
+			}
 		}
 	
 		player.xs -= player.xs * frict;
