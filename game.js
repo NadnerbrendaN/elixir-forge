@@ -53,6 +53,7 @@ class being {
 	}
 	xs = 0;
 	ys = 0;
+	inventory = [];
 }
 
 var player = new being(224,384);
@@ -98,19 +99,36 @@ class order {
 }
 
 class item {
-	constructor(x,y, name, picture, display) {
+	constructor(map, x,y, name, properties, picture, display) {
+		this.map = map;
 		this.x = x;
 		this.y = y;
 		this.name = name;
-		this.pic = picture;
-		this.disp = display;
+		try {
+			this.pic = picture;
+		} catch {
+			this.pic = false;
+		}		
+		try {
+			this.display = display;
+		} catch {
+			this.display = false;
+		}
+		try {
+			this.prop = properties;
+		} catch {
+			this.prop = "";
+		}
 	}
 }
+
+var items = [];
+items[0] = new item(-1, 48,48, "frogLegs", "hoppy");
 
 function click(event) {
 	let x = event.clientX - 8;
 	let y = event.clientY - 8;
-	console.log(x+", "+y)
+	console.log(x+", "+y);
 	if (!started){
 		if (x >= 128 && x <= 384 && y >= 144 && y <= 272){
 			started = true;
@@ -121,21 +139,26 @@ function click(event) {
 		if (x >= 478 && x <= 498 && y >= 45 && y <= 65){
 			map = 1;
 		}
+	} else if (map == -1){
+		if (x >= 48 && x <= 168 && y >= 48 && y <= 168){
+			player.inventory.push(items[0]);
+			items.splice(0, 1);
+		}
 	}
 }
 
 function collide(){
-	if (player.x > 432){player.x = 432; player.xs = 0;}
+	if (player.x > 432 && (player.y <= 208 || player.y >= 240) && player.x <= 512){player.x = 432; player.xs = 0;}
 	else if (player.x < 16){player.x = 16; player.xs = 0;}
 	if (player.y > 432){player.y = 432; player.ys = 0;}
-	else if (player.y <16){player.y = 16; player.ys = 0;}
+	else if (player.y < 16 && (player.x <= 208 || player.x >= 240) && player.y >= 0){player.y = 16; player.ys = 0;}
 	if (map == 1){
-		if (player.x > 400 && player.y < 80){
-			if (48-(512-(player.x+64)) <= 80-player.y){
-				player.x = 400;
+		if (player.x > 304 && player.y < 208){
+			if (player.x-304 <= 208-player.y){
+				player.x = 304;
 				player.xs = 0;
 			} else {
-				player.y = 80;
+				player.y = 208;
 				player.ys = 0;
 			}
 		}
@@ -181,11 +204,34 @@ var tutDone = false;
 
 function tick() {
 	switch (map){
+		case -1:
+			ctx.fillStyle = "#292012";
+			ctx.fillRect(0,0, 512,512);
+			ctx.fillStyle = "#393022";
+			ctx.fillRect(16,16, 480,480);
+			ctx.fillStyle = "#292012";
+			ctx.fillRect(16,168, 480,16);
+			ctx.fillRect(16,336, 480,16);
+			for (i=0;i<items.length;i++){
+				if(items[i].name == "frogLegs"){
+					ctx.fillStyle = "#10DD5F";
+					ctx.fillRect(48,48, 120,120);
+				}
+			}
+			if (pressedKeys['Escape']){
+				map = 1;
+			}
+			break;
 		case 0:
 			switch (lev){
 				case 0:
 					if (!tutDone){
-						tutorial.display();
+						if (!pressedKeys['Escape']){
+							tutorial.display();
+						}
+						else {
+							map = 1;
+						}
 					} else {
 						alert("Tutorial closing message or something");
 					}
@@ -218,6 +264,12 @@ function tick() {
 			}
 			if (player.x + 32 >= 400 && player.y + 32 <= 128){
 				map = -1;
+			}		
+		}
+
+		for (i=0;i<items.length;i++){
+			if (items[i].display){
+				ctx.drawImage(items[i].pic, items[i].x,items[i].y);
 			}
 		}
 	
