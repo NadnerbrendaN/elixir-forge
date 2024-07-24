@@ -12,6 +12,8 @@ const R1 = new Image();
 R1.src = "./assets/Room1.png.png"
 const tim = new Image();
 tim.src = "./assets/Tim.png";
+const cauld = new Image();
+cauld.src = "./assets/Cauldron-1.png.png";
 
 canvas.addEventListener("click", click);
 
@@ -56,7 +58,7 @@ class being {
 	inventory = [];
 }
 
-var player = new being(224,384);
+var player = new being(224,224);
 
 function getLines(ctx, text, maxWidth) {
     var words = text.split(" ");
@@ -148,10 +150,10 @@ function click(event) {
 }
 
 function collide(){
-	if (player.x > 432 && (player.y <= 208 || player.y >= 240) && player.x <= 512){player.x = 432; player.xs = 0;}
+	if (player.x > 432 && (player.y < 208 || player.y > 240) && player.x <= 512){player.x = 432; player.xs = 0;}
 	else if (player.x < 16){player.x = 16; player.xs = 0;}
 	if (player.y > 432){player.y = 432; player.ys = 0;}
-	else if (player.y < 16 && (player.x <= 208 || player.x >= 240) && player.y >= 0){player.y = 16; player.ys = 0;}
+	else if (player.y < 16 && (player.x < 208 || player.x > 240) && player.y >= 0){player.y = 16; player.ys = 0;}
 	if (map == 1){
 		if (player.x > 304 && player.y < 208){
 			if (player.x-304 <= 208-player.y){
@@ -162,34 +164,34 @@ function collide(){
 				player.ys = 0;
 			}
 		}
-		if (player.x > 144 && player.x < 304 && player.y+64 > 448){
-			if (player.x-208 <= 304-player.x){
-				if (player.y-384 <= player.x-144){
-					player.y = 384;
+		if (player.x > 80 && player.x < 336 && player.y > 368){
+			if (player.x-80 <= 336-player.x){
+				if (player.y-368 <= player.x-80){
+					player.y = 368;
 					player.ys = 0;
 				} else{
-					player.x = 144;
+					player.x = 80;
 					player.xs = 0;
 				}
-			} else if (304-player.x <= player.y-384) {
-				player.x = 304;
+			} else if (336-player.x <= player.y-368) {
+				player.x = 336;
 				player.xs = 0;
 			} else {
-				player.y = 384;
+				player.y = 368;
 				player.ys = 0;
 			}
 		}
-		if (player.x < 64 && player.y+64 > 144 && player.y < 352){
-			if (64-player.x <= player.y-80){
-				if (64-player.x <= 352-player.y){
-					player.x = 64;
+		if (player.x < 80 && player.y > 80 && player.y < 368){
+			if (80-player.x <= player.y-80){
+				if (80-player.x <= 368-player.y){
+					player.x = 80;
 					player.xs = 0;
 				} else{
-					player.y = 352;
+					player.y = 368;
 					player.ys = 0;
 				}
-			} else if (352-player.y <= player.y-80) {
-				player.y = 352;
+			} else if (368-player.y <= player.y-80) {
+				player.y = 368;
 				player.ys = 0;
 			} else {
 				player.y = 80;
@@ -204,6 +206,14 @@ var tutDone = false;
 
 function tick() {
 	switch (map){
+		case -2:
+			ctx.fillStyle = "#727272"
+			ctx.fillRect(0,0, 256,512);
+			ctx.drawImage(cauld, 256,0);
+			if (pressedKeys['Escape']){
+				map = 1;
+			}
+			break;
 		case -1:
 			ctx.fillStyle = "#292012";
 			ctx.fillRect(0,0, 512,512);
@@ -259,12 +269,15 @@ function tick() {
 			player.ys += acc;
 		}
 		if (pressedKeys['e']){
-			if (player.x + 32 >= 192 && player.x + 32 <= 320 && player.y + 32 >= 400){
+			if (player.x >= 80 && player.x <= 336 && player.y >= 368){
 				map = 0;
 			}
-			if (player.x + 32 >= 400 && player.y + 32 <= 128){
+			if (player.x >= 272 && player.y + 32 <= 240){
 				map = -1;
-			}		
+			}
+			if (player.x <= 160 && player.y >= 80 && player.y <= 384){
+				map = -2;
+			}
 		}
 
 		for (i=0;i<items.length;i++){
