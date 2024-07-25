@@ -1,6 +1,6 @@
 const canvas = document.getElementById("ManLand");
 const ctx = canvas.getContext("2d");
-const acc = 0.5;
+const acc = 1;
 const frict = 0.075;
 var started = false;
 var map = 0;
@@ -14,6 +14,10 @@ const tim = new Image();
 tim.src = "./assets/Tim.png";
 const cauld = new Image();
 cauld.src = "./assets/Cauldron-1.png.png";
+const legs = new Image();
+legs.src = "./assets/frogLegs-1.png.png";
+const potion = new Image();
+potion.src = "./assets/Potion-1.png.png";
 
 canvas.addEventListener("click", click);
 
@@ -37,11 +41,11 @@ function start() {
 			ctx.fillRect(104+i*(64+16)-320,400, 64,64);
 		}
 		ctx.fillStyle = "#000000";
-		ctx.font = "64px sans";
+		ctx.font = "64px sans serif";
 		if (i<4){
-			ctx.fillText(i, 104+i*(64+16)+12, 376);
+			ctx.fillText(i, 106+i*(64+16)+12, 376);
 		} else {
-			ctx.fillText(i, 104+i*(64+16)+12-320, 456);
+			ctx.fillText(i, 106+i*(64+16)+12-320, 456);
 		}
 	}
 }
@@ -93,28 +97,16 @@ class order {
 		for (i=0;i<lines.length;i++){
 			ctx.fillText(lines[i], 40,112+(this.size*(i+1)));
 		}
-		ctx.fillStyle = "FF0000";
-		ctx.font = "32px sans serif";
-		ctx.fillText("x", 480,64);
-		ctx.strokeRect(478,45, 20,20);
 	}
 }
 
 class item {
-	constructor(map, x,y, name, properties, picture, display) {
-		this.map = map;
-		this.x = x;
-		this.y = y;
+	constructor(map, name, properties, picture) {
 		this.name = name;
 		try {
 			this.pic = picture;
 		} catch {
 			this.pic = false;
-		}		
-		try {
-			this.display = display;
-		} catch {
-			this.display = false;
 		}
 		try {
 			this.prop = properties;
@@ -125,7 +117,7 @@ class item {
 }
 
 var items = [];
-items[0] = new item(-1, 48,48, "frogLegs", "hoppy");
+items[0] = new item(-1, "frogLegs", "hoppy", legs);
 
 function click(event) {
 	let x = event.clientX - 8;
@@ -137,14 +129,19 @@ function click(event) {
 			map = 0;
 			inter = setInterval(tick, 16);
 		}
-	} else if (map == 0){
-		if (x >= 478 && x <= 498 && y >= 45 && y <= 65){
-			map = 1;
-		}
 	} else if (map == -1){
 		if (x >= 48 && x <= 168 && y >= 48 && y <= 168){
-			player.inventory.push(items[0]);
-			items.splice(0, 1);
+			if (items[0]){
+				player.inventory.push(items[0]);
+				items.splice(0, 1);
+			}
+		}
+	} else if (map == -2){
+		if (x >= 16 && x <= 144 && y >= 16 && y <= 144){
+			if (player.inventory[0] && !player.inventory[0].name.includes("potion")){
+				let cauldItem = player.inventory[0];
+				player.inventory[0] = new item(-2, `potion-${cauldItem.prop}`, false, potion);
+			}
 		}
 	}
 }
@@ -201,8 +198,10 @@ function collide(){
 	}
 }
 
-tutorial = new order("Hello! Welcome to the lab! To get you acquainted with the new working environment, I have a simple task for you: brew a potion that makes the person who drinks it jump higher. To interact with things, press E near them.", 22);
+const tutorial = new order("Hello! Welcome to the lab! To get you acquainted with the new working environment, I have a simple task for you: brew a potion that makes the person who drinks it jump higher. To interact with things, press E near them, and press escape to close this call. Once you're done, come back to me.", 20);
 var tutDone = false;
+const tutorialEnd = new order("Great job! You've made your first potion! Close this call and I'll give you another task.", 25);
+const order1 = new order("Next, please give me a sword that poisons anyone who touches the blade. I have unlocked the eastern room to help you.", 25);
 
 function tick() {
 	switch (map){
@@ -210,6 +209,9 @@ function tick() {
 			ctx.fillStyle = "#727272"
 			ctx.fillRect(0,0, 256,512);
 			ctx.drawImage(cauld, 256,0);
+			for (i=0;i<player.inventory.length;i++){
+				ctx.drawImage(player.inventory[i].pic, 16,16, 128,128);
+			}
 			if (pressedKeys['Escape']){
 				map = 1;
 			}
@@ -223,10 +225,7 @@ function tick() {
 			ctx.fillRect(16,168, 480,16);
 			ctx.fillRect(16,336, 480,16);
 			for (i=0;i<items.length;i++){
-				if(items[i].name == "frogLegs"){
-					ctx.fillStyle = "#10DD5F";
-					ctx.fillRect(48,48, 120,120);
-				}
+				ctx.drawImage(items[i].pic, 48,48, 120,120);
 			}
 			if (pressedKeys['Escape']){
 				map = 1;
@@ -235,16 +234,26 @@ function tick() {
 		case 0:
 			switch (lev){
 				case 0:
-					if (!tutDone){
-						if (!pressedKeys['Escape']){
-							tutorial.display();
+					for (i=0;i<player.inventory.length;i++){
+						if (player.inventory[i].name == "potion-hoppy"){
+							tutDone = true;
+							player.inventory.splice(i, 1);
 						}
-						else {
+					}
+					if (!tutDone){
+						tutorial.display();
+						if (pressedKeys['Escape']){
 							map = 1;
 						}
 					} else {
-						alert("Tutorial closing message or something");
+						tutorialEnd.display();
+						if (pressedKeys['Escape']){
+							lev = 1;
+						}
 					}
+					break;
+				case 1:
+					
 					break;
 			}
 			break;
@@ -275,14 +284,8 @@ function tick() {
 			if (player.x >= 272 && player.y + 32 <= 240){
 				map = -1;
 			}
-			if (player.x <= 160 && player.y >= 80 && player.y <= 384){
+			if (player.x <= 120 && player.y >= 80 && player.y <= 384){
 				map = -2;
-			}
-		}
-
-		for (i=0;i<items.length;i++){
-			if (items[i].display){
-				ctx.drawImage(items[i].pic, items[i].x,items[i].y);
 			}
 		}
 	
