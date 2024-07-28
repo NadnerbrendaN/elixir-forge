@@ -30,6 +30,8 @@ const bowl = new Image();
 bowl.src = "./assets/Bowl-1.png.png";
 const fBowl = new Image();
 fBowl.src = "./assets/Full Bowl-1.png.png";
+const northRoom = new Image();
+northRoom.src = "./assets/Library-1.png.png";
 
 canvas.addEventListener("click", click);
 
@@ -40,6 +42,9 @@ window.onkeydown = function(e) { pressedKeys[e.key] = true; }
 function start() {
 	ctx.fillStyle = "#FFFFFF";
 	ctx.fillRect(0,0, 512,512);
+	ctx.font = "32px sans serif";
+	ctx.fillStyle = "#000000";
+	ctx.fillText("Level Select", 168,312);
 	sBut.onload = function(){ctx.drawImage(sBut, 128,144, 256,128)}
 	for (i=0;i<8;i++) {
 		if  (i == lev){
@@ -228,59 +233,63 @@ function click(event) {
 }
 
 function collide(){
+	mapChange = false;
 	if (map == 1){
 		if (player.x > 432 && (player.y < 208 || player.y > 240)){player.x = 432; player.xs = 0;}
-		else if (player.x > 464 && player.y >= 208 && player.y <= 240){map = 2; player.x = 0;}
+		else if (player.x > 464 && player.y >= 208 && player.y <= 240){map = 2; mapChange = true; player.x = 0;}
 		else if (player.x < 16){player.x = 16; player.xs = 0;}
 		if (player.y > 432){player.y = 432; player.ys = 0;}
 		else if (player.y < 16 && (player.x < 208 || player.x > 240)){player.y = 16; player.ys = 0;}
-		if (player.x > 304 && player.y < 208){
-			if (player.x-304 <= 208-player.y){
-				player.x = 304;
-				player.xs = 0;
-			} else {
-				player.y = 208;
-				player.ys = 0;
-			}
-		}
-		if (player.x > 80 && player.x < 336 && player.y > 368){
-			if (player.x-80 <= 336-player.x){
-				if (player.y-368 <= player.x-80){
-					player.y = 368;
+		else if (player.y < 0 && player.x > 208 && player.x < 240){map = 3; mapChange = true; player.y = 496}
+		if (!mapChange){
+			if (player.x > 304 && player.y < 208){
+				if (player.x-304 <= 208-player.y){
+					player.x = 304;
+					player.xs = 0;
+				} else {
+					player.y = 208;
 					player.ys = 0;
-				} else{
-					player.x = 80;
-					player.xs = 0;
 				}
-			} else if (336-player.x <= player.y-368) {
-				player.x = 336;
-				player.xs = 0;
-			} else {
-				player.y = 368;
-				player.ys = 0;
 			}
-		}
-		if (player.x < 80 && player.y > 80 && player.y < 368){
-			if (80-player.x <= player.y-80){
-				if (80-player.x <= 368-player.y){
-					player.x = 80;
+			else if (player.x > 80 && player.x < 336 && player.y > 368){
+				if (player.x-80 <= 336-player.x){
+					if (player.y-368 <= player.x-80){
+						player.y = 368;
+						player.ys = 0;
+					} else{
+						player.x = 80;
+						player.xs = 0;
+					}
+				} else if (336-player.x <= player.y-368) {
+					player.x = 336;
 					player.xs = 0;
-				} else{
+				} else {
 					player.y = 368;
 					player.ys = 0;
 				}
-			} else if (368-player.y <= player.y-80) {
-				player.y = 368;
-				player.ys = 0;
-			} else {
-				player.y = 80;
-				player.ys = 0;
+			}
+			else if (player.x < 80 && player.y > 80 && player.y < 368){
+				if (80-player.x <= player.y-80){
+					if (80-player.x <= 368-player.y){
+						player.x = 80;
+						player.xs = 0;
+					} else{
+						player.y = 368;
+						player.ys = 0;
+					}
+				} else if (368-player.y <= player.y-80) {
+					player.y = 368;
+					player.ys = 0;
+				} else {
+					player.y = 80;
+					player.ys = 0;
+				}
 			}
 		}
 	} else if (map == 2){
 		if (player.x > 432){player.x = 432; player.xs = 0;}
-		else if (player.x < 16 && player.y > 364){player.x = 16; player.xs = 0;}
-		else if (player.x < 0 && player.y < 364){map = 1; player.x = 464;}
+		else if (player.x < 16 && player.y > 264){player.x = 16; player.xs = 0;}
+		else if (player.x < 0 && player.y < 264){map = 1; player.x = 464;}
 		if (player.y < 228){player.y = 228; player.ys = 0;}
 		else if (player.y > 432){player.y = 432; player.ys = 0;}
 		if (player.x >= 92 && player.x <= 360 && player.y >= 304){
@@ -302,7 +311,55 @@ function collide(){
 				}
 			}
 		}
+	} else if (map == 3){
+		if (player.x > 348){player.x = 348; player.xs = 0;}
+		else if (player.x < 84){player.x = 84; player.xs = 0;}
+		if (player.y < 106){player.y = 106; player.ys = 0;}
+		else if (player.y > 432 && (player.x <= 208 || player.x >= 256)){player.y = 432; player.ys = 0;}
+		else if (player.y > 496 && player.x > 208 && player.x < 256){map = 1; mapChange = true; player.y = 8}
+		if (!mapChange){
+			if (player.x >= 128 && player.x <= 304 && player.y >= 168 && player.y <= 368){
+				if (player.x-128 <= 304-player.x){
+					if (player.y-168 <= 368-player.y){
+						if (player.x-128 <= player.y-168){
+							player.x = 128;
+							player.xs = 0;
+						} else {
+							player.y = 168;
+							player.ys = 0;
+						}
+					} else {
+						if (player.x-128 <= 368-player.y){
+							player.x = 128;
+							player.xs = 0;
+						} else {
+							player.y = 368;
+							player.ys = 0;
+						}
+					}
+				} else {
+					if (player.y-168 <= 368-player.y){
+						if (304-player.x <= player.y-168){
+							player.x = 304;
+							player.xs = 0;
+						} else {
+							player.y = 168;
+							player.ys = 0;
+						}
+					} else {
+						if (304-player.x <= 368-player.y){
+							player.x = 304;
+							player.xs = 0;
+						} else {
+							player.y = 368;
+							player.ys = 0;
+						}
+					}
+				}
+			}
+		}
 	}
+
 }
 
 const tutorial = new order("Hello! Welcome to the lab! To get you acquainted with the new working environment, I have a simple task for you: brew and bring me a potion that makes the person who drinks it jump higher. To interact with things, press E near them, and press escape to close this call.", 20);
@@ -440,6 +497,9 @@ function tick() {
 			break;
 		case 2:
 			ctx.drawImage(eastRoom, 0,0);
+			break;
+		case 3:
+			ctx.drawImage(northRoom, 0,0);
 			break;
 	}
 	if (map == 1 || map == 2 || map == 3){
