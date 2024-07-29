@@ -32,6 +32,8 @@ const fBowl = new Image();
 fBowl.src = "./assets/Full Bowl-1.png.png";
 const northRoom = new Image();
 northRoom.src = "./assets/Library-1.png.png";
+const scroll = new Image();
+scroll.src = "./assets/Scroll-1.png.png";
 
 canvas.addEventListener("click", click);
 
@@ -147,7 +149,7 @@ function click(event) {
 			started = true;
 			map = 0;
 			inter = setInterval(tick, 16);
-		}
+		} if (x >= 108 && y >= 320 && x <= 408 && y <= 464)
 	} else if (map == -1){
 		if (x >= 48 && x <= 168 && y >= 48 && y <= 168){
 			if (items1[0]){
@@ -228,6 +230,10 @@ function click(event) {
 				props = "";
 				bowlFull = false;
 			}
+		}
+	} else if (map == -5){
+		if (x >= 460 && y >= 460 && curs < 2){
+			curs++;
 		}
 	}
 }
@@ -370,12 +376,30 @@ var done1 = 0;
 const order1End1 = new order("Great job on figuring out the dipping station! I just got another order that I think will teach you well.", 25);
 const order1End2 = new order("Great job on figuring out the dipping station! I think that mixture had some frog leg in it, but otherwise it was perfect! I just got another order that I think will teach you well.", 25);
 var bowlFull = false;
+
+var curs = 0;
+var scrolls = [];
+scrolls[0] = "If ye wish to jump to the sky, use legs of a creature that jumps quite high.";
+scrolls[1] = "To feed the enemies you hate so, use the shrooms with a green glow.";
+scrolls[2] = "To dip an object in an elixir is to imbue it with effects of that mixture.";
 //var oldT = 0;
 function tick() {
 	//var seconds = new Date() / 1000;
 	//console.log(seconds-oldT);
 	//oldT = seconds;
 	switch (map){
+		case -5:
+			ctx.drawImage(scroll, 0,0);
+			ctx.font = "64px sans serif";
+			ctx.fillStyle = "#000000";
+			lines = getLines(ctx, scrolls[curs], 480);
+			for (i=0;i<lines.length;i++){
+				ctx.fillText(lines[i], 16, 80+i*80);
+			}
+			if (pressedKeys['Escape']){
+				map = 3
+			}
+			break;
 		case -4:
 			if (!bowlFull){
 				ctx.drawImage(bowl, 0,0);
@@ -537,6 +561,9 @@ function tick() {
 				if (player.y >= 296 && player.x >= 80 && player.x <= 376){
 					map = -4;
 				}
+			}
+			if (map == 3){
+				map = -5
 			}
 		}
 	
