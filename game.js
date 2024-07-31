@@ -38,6 +38,10 @@ const fireRoot = new Image();
 fireRoot.src = "./assets/Firerooot-1.png.png";
 const hammer = new Image();
 hammer.src = "./assets/Hammer-1.png.png";
+const playPic = new Image();
+playPic.src = "./assets/Player-1.png.png";
+const dHammer = new Image();
+dHammer.src = "./assets/Hammer Dipped-1.png.png";
 
 canvas.addEventListener("click", click);
 
@@ -188,15 +192,35 @@ function click(event) {
 			}
 		}
 	} else if (map == -2){
-		if (x >= 16 && x <= 144 && y >= 16 && y <= 144 && player.inventory[0]){
+		if (x <= 128 && y >= 16 && y <= 144 && player.inventory[0]){
 			if (player.inventory[0].prop){
 				let cauldItem = player.inventory[0];
 				player.inventory[0] = new item(`potion-${cauldItem.prop}`, false, potion);
 			}
-		} else if (x >= 144 && x <= 272 && y >= 16 && y <= 144 && player.inventory[1]){
+		} else if (x >= 128 && x <= 256 && y >= 16 && y <= 144 && player.inventory[1]){
 			if (player.inventory[1].prop){
 				let cauldItem = player.inventory[1];
 				player.inventory[1] = new item(`potion-${cauldItem.prop}`, false, potion);
+			}
+		} else if (x >= 256 && x <= 384 && y >= 16 && y <= 144 && player.inventory[2]){
+			if (player.inventory[2].prop){
+				let cauldItem = player.inventory[2];
+				player.inventory[2] = new item(`potion-${cauldItem.prop}`, false, potion);
+			}
+		} else if (x >= 384 && x <= 512 && y >= 16 && y <= 144 && player.inventory[3]){
+			if (player.inventory[3].prop){
+				let cauldItem = player.inventory[3];
+				player.inventory[3] = new item(`potion-${cauldItem.prop}`, false, potion);
+			}
+		} else if (x >= 0 && x <= 128 && y >= 144 && y <= 272 && player.inventory[4]){
+			if (player.inventory[4].prop){
+				let cauldItem = player.inventory[4];
+				player.inventory[4] = new item(`potion-${cauldItem.prop}`, false, potion);
+			}
+		} else if (x >= 128 && x <= 256 && y >= 144 && y <= 272 && player.inventory[4]){
+			if (player.inventory[5].prop){
+				let cauldItem = player.inventory[5];
+				player.inventory[5] = new item(`potion-${cauldItem.prop}`, false, potion);
 			}
 		}
 	} else if (map == -3){
@@ -208,9 +232,8 @@ function click(event) {
 		} else if (x >= 196 && x <= 316 && y >= 48 && y <= 168){
 			if (items2[1]){
 				player.inventory.push(items2[1]);
-				items2.splice(1, 1);
+				items2.splice(1,1);
 			}
-		} else if (x >= 344 && x <= 464 && y >= 48 && y <= 168){
 			if (items2[2]){
 				player.inventory.push(items2[2]);
 				items2.splice(2, 1);
@@ -218,7 +241,7 @@ function click(event) {
 		}
 	} else if (map == -4){
 		if (x <= 128 && y <= 128){
-			if (player.inventory[0].name.includes("potion") && !player.inventory[0].name.includes("sword")){
+			if (player.inventory[0].name.includes("potion") && !player.inventory[0].name.includes("sword") && !player.inventory[0].name.includes("hammer")){
 				props += "-"+player.inventory[0].name;
 				bowlFull = true;
 				player.inventory.splice(0,1);
@@ -234,7 +257,7 @@ function click(event) {
 				bowlFull = false;
 			}
 		} else if (x <= 256 && x > 128 && y <= 128){
-			if (player.inventory[1].name.includes("potion") && !player.inventory[1].name.includes("sword")){
+			if (player.inventory[1].name.includes("potion") && !player.inventory[1].name.includes("sword") && !player.inventory[1].name.includes("hammer")){
 				props += "-"+player.inventory[1].name;
 				bowlFull = true;
 				player.inventory.splice(1,1);
@@ -250,7 +273,7 @@ function click(event) {
 				bowlFull = false;
 			}
 		} else if (x > 256 && x <= 384 && y <= 128){
-			if (player.inventory[2].name.includes("potion") && !player.inventory[2].name.includes("sword")){
+			if (player.inventory[2].name.includes("potion") && !player.inventory[2].name.includes("sword") && !player.inventory[2].name.includes("hammer")){
 				props += "-"+player.inventory[2].name;
 				bowlFull = true;
 				player.inventory.splice(2,1);
@@ -405,15 +428,18 @@ function collide(){
 
 const tutorial = new order("Hello! Welcome to the lab! To get you acquainted with the new working environment, I have a simple task for you: brew and bring me a potion that makes the person who drinks it jump higher. To interact with things, press E near them, and press escape to close menus.", 20);
 var tutDone = false;
-const tutorialEnd = new order("Great job! You've made your first potion! Close this call and I'll give you another task.", 25);
+const tutorialEnd = new order("You've made your first potion! Close this call and I'll give you another task.", 25);
 const order1 = new order("Next, please give me a sword that poisons anyone who touches the blade. For this, you will have to use the eastern room. If you need help, feel free to consult the library in the northern room.", 24);
 var done1 = 0;
 const order1End1 = new order("Great job on figuring out the dipping station! I just got another order that I think will be good for you.", 25);
 const order1End2 = new order("Great job on figuring out the dipping station! I think that mixture had some frog leg in it, but otherwise it was perfect! I just got another order that I think will be good for you.", 25);
 const order2 = new order("This customer requested a hammer that burns anything it hits and then bounces off of it. This one takes more creativity.", 25);
 var done2 = 0;
-const order2End1 = new order("Great job! Ready for another?", 25);
-const order2End2 = new order("Great job! It also had some poisonous effects, but still great job! Ready for another?", 25);
+const order2End1 = new order("Perfect! Ready for another?", 25);
+const order2End2 = new order("Almost perfect! It had some poisonous effects, but still great job! Ready for another?", 25);
+const order3 = new order("They want your most powerful weapon. They didnt specify anything else, so go out and do your best!", 25);
+var done3 = 0;
+const order3End = new order("They accepted your weapon! Good job dealing with that obscure request! That's all I have for you today. See you later!", 25);
 
 var bowlFull = false;
 var curs = 0;
@@ -476,8 +502,10 @@ function tick() {
 			ctx.fillRect(0,0, 256,512);
 			ctx.drawImage(cauld, 256,0);
 			for (i=0;i<player.inventory.length;i++){
-				if (i <= 1){
-					ctx.drawImage(player.inventory[i].pic, 16+i*(128),16, 128,128);
+				if (i <= 3){
+					ctx.drawImage(player.inventory[i].pic, i*128,16, 128,128);
+				} else if (i <= 5){
+					ctx.drawImage(player.inventory[i].pic, (i-4)*128,144, 128,128);
 				}
 			}
 			if (pressedKeys['Escape']){
@@ -508,7 +536,9 @@ function tick() {
 						if (player.inventory[i].name == "potion-hoppy"){
 							tutDone = true;
 						}
-						player.inventory.splice(i, 1);
+						if (tutDone){
+							player.inventory.splice(i, 1);
+						}
 					}
 					if (!tutDone){
 						tutorial.display();
@@ -531,7 +561,9 @@ function tick() {
 						if (player.inventory[i].name == "sword-potion-poison-potion-hoppy" || player.inventory[i].name == "sword-potion-hoppy-potion-poison"){
 							done1 = 2;
 						}
-						player.inventory.splice(i, 1);
+						if (done1){
+							player.inventory.splice(i, 1);
+						}
 					}
 					if (!done1){
 						order1.display();
@@ -542,11 +574,13 @@ function tick() {
 						order1End1.display();
 						if (pressedKeys['Escape']){
 							lev = 2;
+							pressedKeys['Escape'] = false;
 						}
 					} else if (done1 == 2){
 						order1End2.display();
 						if (pressedKeys['Escape']){
 							lev = 2;
+							pressedKeys['Escape'] = false;
 						}
 					}
 					items1[0] = new item("frogLegs", "hoppy", legs);
@@ -561,6 +595,9 @@ function tick() {
 						if (player.inventory[i].name.includes("poison")){
 							done2 = 2;
 						}
+						if (done2){
+							player.inventory.splice(i,1);
+						}
 					}
 					if (!done2){
 						order2.display();
@@ -570,12 +607,14 @@ function tick() {
 					} else if (done2 == 1){
 						order2End1.display();
 						if (pressedKeys['Escape']){
-							map = 3;
+							lev = 3;
+							pressedKeys['Escape'] = false;
 						}
 					} else if (done2 == 2){
 						order2End2.display();
 						if (pressedKeys['Escape']){
-							map = 3;
+							lev = 3;
+							pressedKeys['Escape'] = false;
 						}
 					}
 					items1[0] = new item("frogLegs", "hoppy", legs);
@@ -585,6 +624,45 @@ function tick() {
 					items2[1] = new item("hammer", "", hammer);
 					break;
 				case 3:
+					count = 0;
+					if (!done3){
+						loop1:
+						for (i=0;i<player.inventory.length;i++){
+							for (k=0;k<player.inventory[i].name.length;k++){
+								if (player.inventory[i].name[k] == "-"){
+									count++;
+								}
+							}
+							if (count > 4){
+								done3++;
+								break loop1;
+							}
+						}
+						order3.display();
+						if (pressedKeys['Escape']){
+							map = 1;
+						}
+					} else if (done3 == 1){
+						order3End.display();
+						for (i=0;i<player.inventory.length;i++){
+							player.inventory.splice(i,1);
+						}
+						if (pressedKeys['Escape']){
+							console.log("Poking around in the console, eh? If you're interested in programming and this game, you could help me develop it at https://www.github.com/nadnerbrendan/elixir-forge");
+							started = false;
+							tutDone = false;
+							done1 = false;
+							done2 = false;
+							done3 = false;
+							clearInterval(inter);
+							start();
+						}
+					}
+					items1[0] = new item("frogLegs", "hoppy", legs);
+					items1[1] = new item("greenCap", "poison", greenCap);
+					items1[2] = new item("fireRoot", "burny", fireRoot);
+					items2[0] = new item("sword", "", sword);
+					items2[1] = new item("hammer", "", hammer);
 					break;
 			}
 			break;
@@ -599,9 +677,7 @@ function tick() {
 			break;
 	}
 	if (map == 1 || map == 2 || map == 3){
-		ctx.fillStyle = "#000000";
-		ctx.fillRect(player.x,player.y, 64,64);
-	
+		ctx.drawImage(playPic, player.x,player.y, 64,64);
 		if (pressedKeys['a'] || pressedKeys['ArrowLeft']){
 			player.xs -= acc;
 		}
